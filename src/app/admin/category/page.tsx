@@ -1,8 +1,13 @@
+import Navbar from '@/components/view/Navbar'
 import React from 'react'
 
 function page() {
   return (
-    <div>page</div>
+    <div className="">
+          <div className="bg-white">
+            <Navbar useName name={"Category"}/>
+          </div>
+        </div>
   )
 }
 

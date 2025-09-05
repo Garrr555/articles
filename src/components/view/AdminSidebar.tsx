@@ -34,15 +34,17 @@ export default function AdminSidebar() {
   return (
     <aside className="text-white fixed left-0 top-0 h-screen w-64 bg-[#2563EB] flex flex-col">
       {/* Logo */}
-      <div className="h-16 flex items-center px-5 mt-4">
-        <Image
-          src={"/logo2.svg"}
-          width={150}
-          height={120}
-          alt={"logo"}
-          className="invert brightness-0"
-        />
-      </div>
+      <Link href={"/"}>
+        <div className="h-16 flex items-center px-5 mt-4">
+          <Image
+            src={"/logo2.svg"}
+            width={150}
+            height={120}
+            alt={"logo"}
+            className="invert brightness-0"
+          />
+        </div>
+      </Link>
 
       {/* Menu */}
       <nav className="flex-1 px-3 py-4 space-y-2">

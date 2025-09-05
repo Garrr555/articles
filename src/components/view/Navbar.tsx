@@ -29,10 +29,11 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { LogOutIcon } from "lucide-react";
-import { boolean } from "zod";
 
 interface NavbarProps {
   invert?: boolean | false;
+  useName?: boolean | false;
+  name?: string;
 }
 
 type Profile = {
@@ -44,7 +45,7 @@ type Profile = {
 export default function Navbar(props: NavbarProps) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const router = useRouter();
-  const { invert } = props;
+  const { invert, useName, name } = props;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -82,13 +83,21 @@ export default function Navbar(props: NavbarProps) {
     >
       {/* Logo */}
       <button onClick={() => router.push("/")}>
-        <Image
-          src={"/logo2.svg"}
-          width={150}
-          height={150}
-          alt={"logo"}
-          className={`${invert ? "sm:invert sm:brightness-0" : ""}`}
-        />
+        {useName ? (
+          <div>
+            <p className="text-2xl font-semibold">{name}</p>
+          </div>
+        ) : (
+          <div>
+            <Image
+              src={"/logo2.svg"}
+              width={150}
+              height={150}
+              alt={"logo"}
+              className={`${invert ? "sm:invert sm:brightness-0" : ""}`}
+            />
+          </div>
+        )}
       </button>
 
       {/* Avatar + Dropdown */}

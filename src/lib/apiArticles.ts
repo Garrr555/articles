@@ -12,6 +12,7 @@ export const getArticles = async (params?: {
   sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;
+  search?: string;
 }) => {
   const res = await api.get("/articles", { params });
   return res.data; // { data: Article[], total, page, limit }
@@ -20,6 +21,11 @@ export const getArticles = async (params?: {
 export const getArticleById = async (id: string) => {
   const res = await api.get(`/articles/${id}`);
   return res.data; // {id, title, content, category, user, ...}
+};
+
+export const getCategories = async () => {
+  const res = await api.get("/categories");
+  return res.data; // { data: Category[] }
 };
 
 
