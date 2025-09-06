@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +34,7 @@ import {
   Link as LinkIcon,
   ArrowLeft,
 } from "lucide-react";
-import { createArticle } from "@/lib/apiArticles";
+import { getArticleById, updateArticle } from "@/lib/apiArticles";
 import { getCategories } from "@/lib/apiCategories";
 import Navbar from "@/components/view/Navbar";
 import Link from "next/link";
@@ -45,14 +45,30 @@ type Category = {
   name: string;
 };
 
-export default function AddArticlePage() {
+type Article = {
+  id: string;
+  title: string;
+  content: string;
+  categoryId: string;
+  category: { id: string; name: string };
+  image?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export default function EditArticlePage() {
   const router = useRouter();
+  const params = useParams();
+  const articleId = params.id as string;
+
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [content, setContent] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [article, setArticle] = useState<Article | null>(null);
 
   const editor = useEditor({
     extensions: [StarterKit, Underline, TiptapLink],
@@ -63,6 +79,7 @@ export default function AddArticlePage() {
     },
   });
 
+  // Fetch categories
   useEffect(() => {
     async function fetchCategories() {
       try {
@@ -70,7 +87,6 @@ export default function AddArticlePage() {
         const data = await getCategories();
         console.log("🔍 Categories received:", data);
 
-        // ✅ PERBAIKAN: Double check filter di frontend juga
         const validCategories = data.filter(
           (cat: Category) => cat.id && cat.id.trim() !== ""
         );
@@ -89,10 +105,54 @@ export default function AddArticlePage() {
     fetchCategories();
   }, []);
 
+  // Fetch article data untuk edit
+  useEffect(() => {
+    async function fetchArticle() {
+      if (!articleId) {
+        toast.error("ID artikel tidak ditemukan");
+        router.push("/admin");
+        return;
+      }
+
+      try {
+        setInitialLoading(true);
+        console.log("🔍 Fetching article with ID:", articleId);
+
+        const data = await getArticleById(articleId);
+        console.log("🔍 Article data received:", data);
+
+        setArticle(data);
+        setTitle(data.title);
+        setCategory(data.categoryId || data.category?.id || "");
+        setContent(data.content);
+
+        // Set content ke editor setelah editor ready
+        if (editor && data.content) {
+          editor.commands.setContent(data.content);
+        }
+      } catch (error: any) {
+        console.error("❌ Gagal fetch article:", error);
+        toast.error("Gagal memuat data artikel");
+        router.push("/admin");
+      } finally {
+        setInitialLoading(false);
+      }
+    }
+
+    fetchArticle();
+  }, [articleId, router, editor]);
+
+  // Set content ke editor ketika editor sudah ready
+  useEffect(() => {
+    if (editor && article?.content && !editor.getHTML()) {
+      editor.commands.setContent(article.content);
+      setContent(article.content);
+    }
+  }, [editor, article]);
+
   const handleSubmit = async () => {
     console.log("🔍 Submit button clicked");
 
-    // ✅ PERBAIKAN: Enhanced validation
     if (!title.trim()) {
       toast.error("Judul tidak boleh kosong");
       return;
@@ -108,7 +168,6 @@ export default function AddArticlePage() {
       return;
     }
 
-    // ✅ PERBAIKAN: Validate category exists in list
     const selectedCategory = categories.find((cat) => cat.id === category);
     if (!selectedCategory) {
       toast.error("Kategori yang dipilih tidak valid");
@@ -127,18 +186,52 @@ export default function AddArticlePage() {
       console.log("🔍 Final article data:", articleData);
       console.log("🔍 Selected category:", selectedCategory);
 
-      const result = await createArticle(articleData);
-      console.log("✅ Article created successfully:", result);
+      const result = await updateArticle(articleId, articleData);
+      console.log("✅ Article updated successfully:", result);
 
-      toast.success("Artikel berhasil ditambahkan!");
+      toast.success("Artikel berhasil diperbarui!");
       router.push("/admin");
     } catch (error: any) {
       console.error("❌ Submit failed:", error);
-      toast.error(error.message || "Gagal upload artikel");
+      toast.error(error.message || "Gagal memperbarui artikel");
     } finally {
       setLoading(false);
     }
   };
+
+  if (initialLoading) {
+    return (
+      <div>
+        <div className="bg-white/50">
+          <Navbar useName name={"Articles"} />
+        </div>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="flex items-center gap-2">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
+            <p>Loading article data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!article) {
+    return (
+      <div>
+        <div className="bg-white/50">
+          <Navbar useName name={"Articles"} />
+        </div>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-center">
+            <p className="text-gray-500">Artikel tidak ditemukan</p>
+            <Button className="mt-4" onClick={() => router.push("/admin")}>
+              Kembali ke Admin
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -148,15 +241,51 @@ export default function AddArticlePage() {
       <div className="p-6">
         <Card className="p-6 bg-gray-50">
           <Link href="/admin">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-6">
               <ArrowLeft />
-              <p className="text-lg font-semibold">Create Articles</p>
+              <p className="text-lg font-semibold">Edit Article</p>
             </div>
           </Link>
 
+          {/* Article Info */}
+          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <h3 className="font-semibold text-blue-800 mb-2">
+              Article Information
+            </h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-600">ID:</span>
+                <span className="ml-2 font-mono">{article.id}</span>
+              </div>
+              <div>
+                <span className="text-gray-600">Created:</span>
+                <span className="ml-2">
+                  {new Date(article.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-600">Updated:</span>
+                <span className="ml-2">
+                  {new Date(article.updatedAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-600">Current Category:</span>
+                <span className="ml-2 font-semibold">
+                  {article.category?.name || "N/A"}
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* Upload Thumbnail - Optional */}
           <div className="mb-6">
-            <label className="block font-medium mb-2">Thumbnails</label>
+            <label className="block font-medium mb-2">
+              Thumbnails
+              <span className="text-sm text-gray-500 ml-2">
+                (Optional - currently not implemented)
+              </span>
+            </label>
             <div className="bg-white max-w-72 min-h-60 border-2 border-dashed rounded-lg p-6 flex flex-col justify-center items-center text-center cursor-pointer hover:bg-gray-100">
               <input
                 type="file"
@@ -188,7 +317,7 @@ export default function AddArticlePage() {
           </div>
 
           {/* Title */}
-          <div className="mb-6 ">
+          <div className="mb-6">
             <label className="block font-medium mb-2">
               Title <span className="text-red-500">*</span>
             </label>
@@ -237,7 +366,7 @@ export default function AddArticlePage() {
             </label>
 
             {editor && (
-              <div className="bg-white flex flex-wrap gap-2 border-x border-t rounded-t-md p-2 ">
+              <div className="bg-white flex flex-wrap gap-2 border-x border-t rounded-t-md p-2">
                 <Button
                   size="sm"
                   variant="outline"
@@ -354,7 +483,7 @@ export default function AddArticlePage() {
               </div>
             )}
 
-            <div className="border rounded-b-md p-2 min-h-[400px]">
+            <div className="border rounded-b-md p-2 min-h-[400px] bg-white">
               <EditorContent
                 editor={editor}
                 className="outline-none focus:outline-none w-full h-full whitespace-normal break-words"
@@ -372,12 +501,16 @@ export default function AddArticlePage() {
           <div className="flex justify-end gap-3 mt-8">
             <Button
               variant="outline"
-              onClick={() => router.push("/admin/articles")}
+              onClick={() => router.push("/admin")}
               disabled={loading}
             >
               Cancel
             </Button>
-            <Button variant="outline" disabled={loading}>
+            <Button
+              variant="outline"
+              disabled={loading}
+              onClick={() => router.push(`/articles/${articleId}`)}
+            >
               Preview
             </Button>
             <Button
@@ -385,7 +518,7 @@ export default function AddArticlePage() {
               onClick={handleSubmit}
               disabled={loading || categories.length === 0}
             >
-              {loading ? "Uploading..." : "Upload"}
+              {loading ? "Updating..." : "Update Article"}
             </Button>
           </div>
         </Card>

@@ -124,7 +124,7 @@ export default function Navbar(props: NavbarProps) {
           <DropdownMenuSeparator />
           {profile?.role === "Admin" && (
             <div>
-              <DropdownMenuItem onClick={() => router.push("/admin")}>
+              <DropdownMenuItem onClick={() => router.push("/admin/articles")}>
                 Admin Dashboard
               </DropdownMenuItem>
               <DropdownMenuSeparator />

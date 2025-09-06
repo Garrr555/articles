@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 const menuItems = [
-  { name: "Articles", href: "/admin", icon: FileText },
+  { name: "Articles", href: "/admin/articles", icon: FileText },
   { name: "Category", href: "/admin/category", icon: Tag },
 ];
 
@@ -56,7 +56,7 @@ export default function AdminSidebar() {
               href={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                pathname === item.href
+                pathname.startsWith(item.href)
                   ? "bg-[#3B82F6] text-white"
                   : "text-white hover:bg-[#3B82F6]"
               )}

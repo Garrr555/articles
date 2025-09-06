@@ -25,6 +25,13 @@ import Footer from "@/components/view/Footer";
 import Navbar from "@/components/view/Navbar";
 import Image from "next/image";
 import { Search } from "lucide-react";
+import { getCategories } from "@/lib/apiCategories";
+import { toast } from "sonner";
+
+type Category = {
+  id: string;
+  name: string;
+};
 
 type Article = {
   id: string;
@@ -40,6 +47,7 @@ export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [total, setTotal] = useState(0);
   const router = useRouter();
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
@@ -67,6 +75,31 @@ export default function ArticlesPage() {
   }, [search, category, page]);
 
   const totalPages = Math.ceil(total / perPage);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        console.log("🔍 Fetching categories...");
+        const data = await getCategories();
+        console.log("🔍 Categories received:", data);
+
+        const validCategories = data.filter(
+          (cat: Category) => cat.id && cat.id.trim() !== ""
+        );
+        console.log("🔍 Valid categories after filter:", validCategories);
+
+        setCategories(validCategories);
+
+        if (validCategories.length === 0) {
+          toast.error("Tidak ada kategori yang tersedia");
+        }
+      } catch (error) {
+        console.error("❌ Gagal fetch categories:", error);
+        toast.error("Gagal memuat kategori");
+      }
+    }
+    fetchCategories();
+  }, []);
 
   return (
     <div className="">
@@ -97,20 +130,18 @@ export default function ArticlesPage() {
             <div className="text-black flex flex-col sm:flex-row justify-center items-center gap-2 bg-[#3B82F6] p-4 rounded-xl w-2/3 mx-auto">
               {/* Select */}
               <Select
-                onValueChange={(val) => {
-                  setCategory(val === "all" ? undefined : val);
-                  setPage(1);
-                }}
-                defaultValue="all"
+                value={category}
+                onValueChange={(val) => setCategory(val)}
               >
-                <SelectTrigger className="w-full sm:w-1/3 bg-white">
+                <SelectTrigger className="w-full bg-white">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="Technology">Technology</SelectItem>
-                  <SelectItem value="Business">Business</SelectItem>
-                  <SelectItem value="Lifestyle">Lifestyle</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
 
