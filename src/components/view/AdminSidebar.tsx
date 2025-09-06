@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { FileText, LogOut, Tag } from "lucide-react";
+import { FileText, Loader2Icon, LogOut, Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 const menuItems = [
   { name: "Articles", href: "/admin/articles", icon: FileText },
@@ -24,11 +25,14 @@ const menuItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const [loading, setLoading] = useState(false);
 
   const handleLogout = () => {
+    setLoading(true);
     // contoh: hapus token & redirect ke login
     localStorage.removeItem("token");
     window.location.href = "/login";
+    setLoading(false);
   };
 
   return (
@@ -95,7 +99,7 @@ export default function AdminSidebar() {
                 onClick={handleLogout}
                 className="bg-[#2563EB] hover:bg-[#2563EB]/80 text-white"
               >
-                Logout
+                {loading ? <Loader2Icon className="animate-spin" /> : "Logout"}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -15,8 +15,7 @@ import { Label } from "@/components/ui/label";
 import Header from "@/components/view/Header";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
-import { Eye, EyeOff } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/components/view/Footer";
 import { useState } from "react";
@@ -25,7 +24,8 @@ type Form = { username: string; password: string };
 
 export default function LoginPage() {
   const router = useRouter();
-    const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -34,6 +34,7 @@ export default function LoginPage() {
 
   const onSubmit = async (d: Form) => {
     try {
+      setLoading(true);
       const res = await loginUser(d);
       setToken(res.token);
 
@@ -42,20 +43,18 @@ export default function LoginPage() {
       setRole(profile.role);
 
       toast.success("Login success");
+      setLoading(false);
       router.push("/articles");
     } catch (err: any) {
       console.error("Login error:", err.response?.data || err.message);
-      toast.error(
-        err?.response?.data?.message ||
-          JSON.stringify(err?.response?.data) ||
-          "Login failed"
-      );
+      toast.error("Username or password is incorrect");
+      setLoading(false);
     }
   };
 
   return (
     <div>
-      <Header name="Register" />
+      <Header name="Login" />
       <div className="flex items-center justify-center min-h-screen bg-white sm:bg-gray-100">
         <Card className="w-full max-w-sm rounded-2xl">
           <CardHeader className="flex flex-col items-center justify-center space-y-2">
@@ -112,12 +111,15 @@ export default function LoginPage() {
                 type="submit"
                 className="w-full bg-blue-600 hover:bg-blue-700"
               >
-                Login
+                {loading ? <Loader2Icon className="animate-spin" /> : "Login"}
               </Button>
 
               <p className="text-center text-sm text-gray-600">
                 Don&apos;t have an account?{" "}
-                <Link href="/register" className="text-blue-600 hover:underline">
+                <Link
+                  href="/register"
+                  className="text-blue-600 hover:underline"
+                >
                   Register
                 </Link>
               </p>

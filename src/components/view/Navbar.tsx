@@ -28,7 +28,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { LogOutIcon } from "lucide-react";
+import { Loader2Icon, LogOutIcon } from "lucide-react";
 
 interface NavbarProps {
   invert?: boolean | false;
@@ -44,6 +44,7 @@ type Profile = {
 
 export default function Navbar(props: NavbarProps) {
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { invert, useName, name } = props;
 
@@ -65,10 +66,17 @@ export default function Navbar(props: NavbarProps) {
     fetchProfile();
   }, [router]);
 
-  const handleLogout = () => {
+/*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Handles the logout action by clearing the auth tokens and redirecting the user
+   * to the login page.
+   */
+/*******  21b112c2-7cb2-493d-a034-14521e379bc5  *******/  const handleLogout = () => {
+    setLoading(true);
     clearAuth();
     toast.success("Logged out");
     router.push("/login");
+    setLoading(false);
   };
 
   const avatarLetter = profile?.username
@@ -156,7 +164,11 @@ export default function Navbar(props: NavbarProps) {
                   onClick={handleLogout}
                   className="bg-[#2563EB] hover:bg-[#2563EB]/80 text-white"
                 >
-                  Logout
+                  {loading ? (
+                    <Loader2Icon className="animate-spin" />
+                  ) : (
+                    "Logout"
+                  )}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

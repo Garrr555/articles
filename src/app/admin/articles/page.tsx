@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search } from "lucide-react";
+import { Loader2Icon, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Pagination,
@@ -438,7 +438,11 @@ export default function AdminPage() {
                           handleDeleteClick(article.id, article.title)
                         }
                       >
-                        Delete
+                        {loading ? (
+                          <Loader2Icon className="animate-spin" />
+                        ) : (
+                          "Delete"
+                        )}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -557,10 +561,7 @@ export default function AdminPage() {
                 className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
               >
                 {deleteDialog.isDeleting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Deleting...
-                  </>
+                  <Loader2Icon className="animate-spin" />
                 ) : (
                   "Delete Article"
                 )}

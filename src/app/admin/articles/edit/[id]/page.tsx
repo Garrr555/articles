@@ -33,6 +33,7 @@ import {
   Redo,
   Link as LinkIcon,
   ArrowLeft,
+  Loader2Icon,
 } from "lucide-react";
 import { getArticleById, updateArticle } from "@/lib/apiArticles";
 import { getCategories } from "@/lib/apiCategories";
@@ -488,7 +489,7 @@ export default function EditArticlePage() {
               onClick={handleSubmit}
               disabled={loading || categories.length === 0}
             >
-              {loading ? "Updating..." : "Update Article"}
+              {loading ? <Loader2Icon className="animate-spin"/> : "Update Article"}
             </Button>
           </div>
         </Card>

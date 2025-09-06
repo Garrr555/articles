@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import Link from "next/link";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
 import Header from "@/components/view/Header";
@@ -36,6 +36,7 @@ type Form = {
 export default function RegisterPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -48,6 +49,7 @@ export default function RegisterPage() {
 
   const onSubmit = async (d: Form) => {
     try {
+      setLoading(true);
       console.log("Register payload:", d);
       await registerUser(d);
 
@@ -62,9 +64,11 @@ export default function RegisterPage() {
       setRole(profile.role);
 
       toast.success("Registered and logged in");
+      setLoading(false);
       router.push("/login");
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Register failed");
+      setLoading(false);
+      toast.error(err?.response?.data?.message || "Account already exists");
     }
   };
 
@@ -151,7 +155,11 @@ export default function RegisterPage() {
                 type="submit"
                 className="w-full bg-blue-600 hover:bg-blue-700"
               >
-                Register
+                {loading ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  "Register"
+                )}
               </Button>
 
               <p className="text-center text-sm text-gray-600">

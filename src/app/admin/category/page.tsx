@@ -33,7 +33,7 @@ import {
   updateCategory,
   deleteCategory,
 } from "@/lib/apiCategories";
-import { Search } from "lucide-react";
+import { Loader2Icon, Search } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
 type Category = {
@@ -44,7 +44,7 @@ type Category = {
 
 export default function CategoryPage() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // state untuk form add/edit
   const [newCategory, setNewCategory] = useState("");
@@ -102,10 +102,12 @@ export default function CategoryPage() {
       return;
     }
     try {
+      setLoading(true);
       await updateCategory(editCategory.id, { name: editCategory.name });
       toast.success("Kategori berhasil diperbarui");
       setEditCategory(null);
       fetchCategories();
+      setLoading(false);
     } catch (err) {
       console.error(err);
       toast.error("Gagal memperbarui kategori");
@@ -302,7 +304,11 @@ export default function CategoryPage() {
                               onClick={handleUpdateCategory}
                               className="bg-blue-600"
                             >
-                              Save Shanges
+                              {loading ? (
+                                <Loader2Icon className="animate-spin" />
+                              ) : (
+                                "Save"
+                              )}
                             </Button>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -364,7 +370,11 @@ export default function CategoryPage() {
                 disabled={deleteDialog.isDeleting}
                 className="bg-red-600 hover:bg-red-700"
               >
-                {deleteDialog.isDeleting ? "Deleting..." : "Delete"}
+                {deleteDialog.isDeleting ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  "Delete"
+                )}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

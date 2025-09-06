@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Footer from "@/components/view/Footer";
 import Link from "next/link";
+import Navbar from "@/components/view/Navbar";
 
 type Profile = {
   id: string;
@@ -73,30 +74,7 @@ export default function ProfilePage() {
   return (
     <div>
       {/* Navbar */}
-      <div className="flex justify-between items-center w-full border-b px-10 py-5">
-        <Image src={"/logo2.svg"} width={150} height={150} alt={"logo"} />
-        <div className="flex justify-center items-center gap-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2">
-              <div className="rounded-full py-2 px-4 bg-[#BFDBFE] flex items-center justify-center font-bold text-lg text-[#1E3A8A]">
-                {avatarLetter}
-              </div>
-              <p className="underline hidden sm:flex">
-                {profile?.username || "Guest"}
-              </p>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-48">
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/profile")}>
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+      <Navbar />
 
       {/* konten */}
       <div className="flex items-center justify-center min-h-screen bg-white">
