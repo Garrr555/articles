@@ -24,11 +24,11 @@ export async function getCategories() {
   }
 }
 
-// ✅ Create category
+//  Create category
 export async function createCategory(name: string) {
   try {
     const res = await api.post("/categories", { name });
-    console.log("✅ Category created:", res.data);
+    console.log(" Category created:", res.data);
     return res.data;
   } catch (error: any) {
     console.error("Error createCategory:", error);
@@ -38,7 +38,7 @@ export async function createCategory(name: string) {
   }
 }
 
-// ✅ Update category
+//  Update category
 export async function updateCategory(id: string, payload: any) {
   try {
     const res = await api.put(`/categories/${id}`, payload);
@@ -51,7 +51,7 @@ export async function updateCategory(id: string, payload: any) {
   }
 }
 
-// ✅ Delete category
+//  Delete category
 export async function deleteCategory(id: string) {
   try {
     const res = await api.delete(`/categories/${id}`);

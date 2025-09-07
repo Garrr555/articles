@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📰 Next.js Article Management System
 
-## Getting Started
+## 📌 Overview
+Proyek ini adalah aplikasi **Article Management System** berbasis **Next.js (App Router) + TypeScript + Tailwind CSS**.  
+Aplikasi ini memiliki dua bagian utama:
+- **Public Site**: halaman untuk melihat artikel, profil, dan navigasi umum.
+- **Admin Dashboard**: halaman untuk mengelola artikel, kategori, dan pengguna.
 
-First, run the development server:
+## 🚀 Fitur Utama
+- Autentikasi (Login & Register)
+- Manajemen Artikel (CRUD)
+- Manajemen Kategori
+- Halaman Artikel Publik
+- Komponen UI kustom (button, card, dialog, table, dsb.)
+- Validasi form dengan **Zod**
+- Request API menggunakan **Axios**
 
-```bash
+---
+
+## 📂 Struktur Project
+src/
+├─ app/ # Routing utama Next.js
+│ ├─ (auth)/ # Halaman login & register
+│ ├─ admin/ # Dashboard admin (articles, categories)
+│ ├─ articles/ # Halaman publik artikel
+│ ├─ profile/ # Halaman profil user
+│ ├─ layout.tsx # Layout global
+│ ├─ page.tsx # Halaman utama
+│ └─ globals.css # Style global
+│
+├─ components/
+│ ├─ ui/ # Komponen UI (button, card, input, dsb.)
+│ └─ view/ # Komponen tampilan (Navbar, Sidebar, Footer)
+│
+├─ lib/ # Helper & API client
+│ ├─ apiArticles.ts # API request untuk artikel
+│ ├─ apiAuth.ts # API request untuk autentikasi
+│ ├─ apiCategories.ts # API request untuk kategori
+│ ├─ auth.ts # Utilitas autentikasi
+│ ├─ axios.ts # Konfigurasi Axios
+│ ├─ utils.ts # Helper umum
+│ └─ zodSchemas.ts # Skema validasi Zod
+│
+└─ types/ # Deklarasi tipe
+
+yaml
+Salin kode
+
+---
+
+## ⚙️ Instalasi & Menjalankan
+1. Clone repository:
+   ```bash
+   git clone <repository-url>
+   cd project-folder
+Install dependencies:
+
+bash
+Salin kode
+npm install
+Jalankan development server:
+
+bash
+Salin kode
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Buka di browser:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+arduino
+Salin kode
+http://localhost:3000
+📑 Halaman Utama
+/ → Halaman utama
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+/login → Login user
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+/register → Registrasi user
 
-## Learn More
+/articles → Daftar artikel
 
-To learn more about Next.js, take a look at the following resources:
+/articles/[id] → Detail artikel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+/profile → Profil user
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+/admin → Dashboard admin
 
-## Deploy on Vercel
+/admin/articles → Kelola artikel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+/admin/category → Kelola kategori
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+🧩 Komponen UI
+Beberapa komponen reusable yang digunakan:
+
+Button
+
+Card
+
+Input
+
+Dialog
+
+Table
+
+Pagination
+
+DropdownMenu
+
+Sonner (toast notification)
+
+🔑 Autentikasi
+Menggunakan API Auth (apiAuth.ts)
+
+Validasi input dengan Zod
+
+State session diatur menggunakan helper auth.ts
+
+👨‍💻 Panduan Developer
+Tambah artikel baru: buka /admin/articles/add
+
+Edit artikel: buka /admin/articles/edit/[id]
+
+Tambah kategori: buka /admin/category
+
+Untuk menambah halaman baru, buat folder/file di dalam src/app/
+
+Untuk menambah API helper, buat file baru di src/lib/

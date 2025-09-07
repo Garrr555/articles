@@ -398,7 +398,7 @@ export default function AdminPage() {
                         className="rounded-md object-cover"
                       />
                     </TableCell>
-                    <TableCell className="space-y-2 font-medium max-w-54 overflow-auto">
+                    <TableCell className="space-y-2 font-medium max-w-54 whitespace-normal break-words">
                       {article.title}
                     </TableCell>
                     <TableCell className="text-center">
